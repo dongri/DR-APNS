@@ -52,7 +52,7 @@ module APNS
   def self.establish_notification_connection
     if @cache_connections
       begin
-        self.get_connection(self.host, self.port)
+        self.get_connection(self.host, self.port, self.pem)
         return true
       rescue
       end
@@ -130,7 +130,7 @@ module APNS
   end
   
   def self.with_notification_connection(&block)
-    self.with_connection(self.host, self.port, &block)
+    self.with_connection(self.host, self.port, self.pem, &block)
   end
 
   def self.with_feedback_connection(&block)
@@ -138,7 +138,7 @@ module APNS
     cache_temp = @cache_connections
     @cache_connections = false
 
-    self.with_connection(self.feedback_host, self.feedback_port, &block)
+    self.with_connection(self.feedback_host, self.feedback_port, self.pem, &block)
 
   ensure
     @cache_connections = cache_temp
@@ -146,7 +146,7 @@ module APNS
  
   private
 
-  def self.open_connection(host, port)
+  def self.open_connection(host, port, pem)
     raise "The path to your pem file is not set. (APNS.pem = /path/to/cert.pem)" unless self.pem
     raise "The path to your pem file does not exist!" unless File.exist?(self.pem)
     
@@ -171,55 +171,55 @@ module APNS
     end
   end
 
-  def self.has_connection?(host, port)
-    @connections.has_key?([host,port])
+  def self.has_connection?(host, port, pem)
+    @connections.has_key?([host,port,pem])
   end
 
-  def self.create_connection(host, port)
-    @connections[[host, port]] = self.open_connection(host, port)
+  def self.create_connection(host, port, pem)
+    @connections[[host, port, pem]] = self.open_connection(host, port, pem)
   end
 
-  def self.find_connection(host, port)
-    @connections[[host, port]]
+  def self.find_connection(host, port, pem)
+    @connections[[host, port, pem]]
   end
 
-  def self.remove_connection(host, port)
-    if self.has_connection?(host, port)
-      ssl, sock = @connections.delete([host, port])
+  def self.remove_connection(host, port, pem)
+    if self.has_connection?(host, port, pem)
+      ssl, sock = @connections.delete([host, port, pem])
       ssl.close
       sock.close
     end
   end
 
-  def self.reconnect_connection(host, port)
-    self.remove_connection(host, port)
-    self.create_connection(host, port)
+  def self.reconnect_connection(host, port, pem)
+    self.remove_connection(host, port, pem)
+    self.create_connection(host, port, pem)
   end
 
-  def self.get_connection(host, port)
+  def self.get_connection(host, port, pem)
     if @cache_connections
       # Create a new connection if we don't have one
-      unless self.has_connection?(host, port)
-        self.create_connection(host, port)
+      unless self.has_connection?(host, port, pem)
+        self.create_connection(host, port, pem)
       end
 
-      ssl, sock = self.find_connection(host, port)
+      ssl, sock = self.find_connection(host, port, pem)
       # If we're closed, reconnect
       if ssl.closed?
-        self.reconnect_connection(host, port)
-        self.find_connection(host, port)
+        self.reconnect_connection(host, port, pem)
+        self.find_connection(host, port, pem)
       else
         return [ssl, sock]
       end
     else
-      self.open_connection(host, port)
+      self.open_connection(host, port, pem)
     end
   end
 
-  def self.with_connection(host, port, &block)
+  def self.with_connection(host, port, pem, &block)
     retries = 0
     begin
-      ssl, sock = self.get_connection(host, port)
+      ssl, sock = self.get_connection(host, port, pem)
       yield ssl if block_given?
 
       unless @cache_connections
@@ -228,7 +228,7 @@ module APNS
       end
     rescue Errno::ECONNABORTED, Errno::EPIPE, Errno::ECONNRESET
       if (retries += 1) < 5
-        self.remove_connection(host, port)
+        self.remove_connection(host, port, pem)
         retry
       else
         # too-many retries, re-raise
