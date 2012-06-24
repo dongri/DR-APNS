@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.email = %q{dongriab@gmail.com}
   s.extra_rdoc_files = ["MIT-LICENSE"]
   s.files = ["MIT-LICENSE", "README.textile", "Rakefile", "lib/apns", "lib/apns/core.rb", "lib/apns.rb"]
-  s.homepage = %q{http://github.com/dongriab/APNS}
+  s.homepage = %q{http://github.com/dongriab/dr-apns}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Simple Apple push notification service gem}
