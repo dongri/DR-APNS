@@ -77,6 +77,10 @@ device_token = '123abc456def'
 
 APNS.send_notification(device_token, 'Hello iPhone!')
 APNS.send_notification(device_token, :aps => {:alert => 'Hello iPhone!', :badge => 1, :sound => 'default'})
+
+thread = APNS.send_notification_thread(device_token, 'Hello iPhone!')
+thread = APNS.send_notification_thread(device_token, :aps => {:alert => 'Hello iPhone!', :badge => 1, :sound => 'default'})
+thread.join
 </pre>
 
 h2. Example (Multiple notifications):
@@ -90,6 +94,9 @@ n1 = [device_token, :aps => { :alert => 'Hello...', :badge => 1, :sound => 'defa
 n2 = [device_token, :aps => { :alert => '... iPhone!', :badge => 1, :sound => 'default' }]
 
 APNS.send_notifications([n1, n2])
+
+thread = APNS.send_notifications_thread([n1, n2])
+thread.join
 </pre>
 
 

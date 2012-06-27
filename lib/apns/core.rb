@@ -29,7 +29,7 @@ module APNS
   # Host for push notification service
   # production: gateway.push.apple.com
   # development: gateway.sandbox.apple.com
-  @host = 'gateway.sandbox.push.apple.com'
+  @host = nil #'gateway.sandbox.push.apple.com'
   @port = 2195
 
   # Host for feedback service
@@ -78,6 +78,20 @@ module APNS
       end
       conn.flush
     end
+  end
+  
+  def self.send_notification_thread(device_token, message)
+    thread = Thread.new do
+      self.send_notification(device_token, message)
+    end
+    return thread
+  end
+  
+  def self.send_notifications_thread(notifications)
+    thread = Thread.new do
+      self.send_notifications(notifications)
+    end
+    return thread
   end
   
   def self.feedback
@@ -149,6 +163,7 @@ module APNS
   def self.open_connection(host, port, pem)
     raise "The path to your pem file is not set. (APNS.pem = /path/to/cert.pem)" unless self.pem
     raise "The path to your pem file does not exist!" unless File.exist?(self.pem)
+    raise "APNs host is nil! (APNS.host='gateway.push.apple.com')" unless self.host
     
     context      = OpenSSL::SSL::SSLContext.new
     context.cert = OpenSSL::X509::Certificate.new(File.read(self.pem))
