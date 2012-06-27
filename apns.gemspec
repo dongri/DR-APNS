@@ -2,12 +2,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dr-apns}
-  s.version = "0.1.4"
-
+  s.version = "0.1.5"
+  s.date = %q{2012-06-27}
+  
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dongri Jin"]
   s.autorequire = %q{apns}
-  s.date = %q{2012-06-10}
   s.description = %q{Simple Apple push notification service gem}
   s.email = %q{dongriab@gmail.com}
   s.extra_rdoc_files = ["MIT-LICENSE"]

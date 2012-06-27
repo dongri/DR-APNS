@@ -135,8 +135,14 @@ module APNS
   
   def self.packaged_message(message)
     if message.is_a?(Hash)
+      if message.to_json.bytesize > 256
+        raise "Message(json) bytesize > 256"
+      end
       message.to_json
     elsif message.is_a?(String)
+      if message.bytesize > 256
+        raise "Message bytesize > 256"
+      end
       '{"aps":{"alert":"'+ message + '"}}'
     else
       raise "Message needs to be either a hash or string"
