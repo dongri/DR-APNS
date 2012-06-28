@@ -2,8 +2,8 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dr-apns}
-  s.version = "0.1.5"
-  s.date = %q{2012-06-27}
+  s.version = "0.1.6"
+  s.date = %q{2012-06-28}
   
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dongri Jin"]
