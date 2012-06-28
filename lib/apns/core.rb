@@ -64,7 +64,28 @@ module APNS
     return self.has_connection?(self.host, self.port)
   end
 
+  def self.validate_message(message)
+    if message.is_a?(Hash)
+      if message.to_json.bytesize > 256
+        raise "Message(json) bytesize > 256"
+      end
+    elsif message.is_a?(String)
+      if message.bytesize > 256
+        raise "Message bytesize > 256"
+      end
+    else
+      raise "Message needs to be either a hash or string"
+    end
+  end
+  
+  def self.validate_messages(notifications)
+    notifications.each do |n|
+      self.validate_message(n[1])
+    end
+  end
+  
   def self.send_notification(device_token, message)
+    self.validate_message(message)
     self.with_notification_connection do |conn|
       conn.write(self.packaged_notification(device_token, message))
       conn.flush
@@ -72,6 +93,7 @@ module APNS
   end
   
   def self.send_notifications(notifications)
+    self.validate_messages(notifications)
     self.with_notification_connection do |conn|
       notifications.each do |n|
         conn.write(self.packaged_notification(n[0], n[1]))
@@ -80,14 +102,16 @@ module APNS
     end
   end
   
-  def self.send_notification_thread(device_token, message)
+  def self.send_notification_async(device_token, message)
+    self.validate_message(message)
     thread = Thread.new do
       self.send_notification(device_token, message)
     end
     return thread
   end
   
-  def self.send_notifications_thread(notifications)
+  def self.send_notifications_async(notifications)
+    self.validate_messages(notifications)
     thread = Thread.new do
       self.send_notifications(notifications)
     end
@@ -135,14 +159,8 @@ module APNS
   
   def self.packaged_message(message)
     if message.is_a?(Hash)
-      if message.to_json.bytesize > 256
-        raise "Message(json) bytesize > 256"
-      end
       message.to_json
     elsif message.is_a?(String)
-      if message.bytesize > 256
-        raise "Message bytesize > 256"
-      end
       '{"aps":{"alert":"'+ message + '"}}'
     else
       raise "Message needs to be either a hash or string"
