@@ -4,12 +4,12 @@ require 'rubygems/specification'
 require 'date'
 require 'spec/rake/spectask'
  
-GEM = 'apns'
-GEM_NAME = 'apns'
-GEM_VERSION = '0.9.0'
-AUTHORS = ['James Pozdena']
-EMAIL = "jpoz@jpoz.net"
-HOMEPAGE = "http://github.com/jpoz/apns"
+GEM = 'dr-apns'
+GEM_NAME = 'dr-apns'
+GEM_VERSION = '0.1.7'
+AUTHORS = ['Dongri Jin']
+EMAIL = "dongriat@gmail.com"
+HOMEPAGE = "http://github.com/dongri/DR-APNS"
 SUMMARY = "Simple Apple push notification service gem"
  
 spec = Gem::Specification.new do |s|

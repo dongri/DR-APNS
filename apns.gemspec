@@ -2,17 +2,17 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dr-apns}
-  s.version = "0.1.6"
-  s.date = %q{2012-06-28}
+  s.version = "0.1.7"
+  s.date = %q{2014-11-22}
   
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dongri Jin"]
   s.autorequire = %q{apns}
   s.description = %q{Simple Apple push notification service gem}
-  s.email = %q{dongriab@gmail.com}
+  s.email = %q{dongriat@gmail.com}
   s.extra_rdoc_files = ["MIT-LICENSE"]
   s.files = ["MIT-LICENSE", "README.textile", "Rakefile", "lib/apns", "lib/apns/core.rb", "lib/apns.rb"]
-  s.homepage = %q{http://github.com/dongriab/dr-apns}
+  s.homepage = %q{http://github.com/dongri/DR-APNS}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Simple Apple push notification service gem}
